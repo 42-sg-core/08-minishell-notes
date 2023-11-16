@@ -76,9 +76,62 @@ Reads data from a file descriptor.
 read(fd, buffer, nbytes);
 ```
 
+## Process Control
+
+### fork
+
+Creates a new process.
+
+```c
+pid_t pid = fork();
+```
+
+### wait
+
+Suspends execution of the calling process until one of its children terminates.
+
+```c
+pid_t child_pid = wait(&status);
+```
+
+Used to wait for any child process to end. It is not possible to specify a particular child process to wait for.
+
+### wait3
+
+Similar to `wait`, but also returns resource usage information about the child.
+
+```c
+pid_t child_pid = wait3(&status, options, &rusage);
+```
+
+Extends wait by allowing the calling process to obtain information about the child's resource usage (via rusage). It also supports the use of options like waitpid.
+
+### wait4
+
+Suspends execution of the calling process until a child specified by `pid` changes state, and additionally returns resource usage information about the child.
+
+```c
+pid_t child_pid = wait4(specific_pid, &status, options, &rusage);
+```
+
+Similar to waitpid, but it extends its functionality by also providing resource usage information about the child (similar to wait3). It allows for specific PID targeting and options usage.
+
+### waitpid
+
+Suspends execution of the calling process until a child specified by `pid` argument changes state.
+
+```c
+pid_t child_pid = waitpid(specific_pid, &status, options);
+```
+Provides more control than wait. It can wait for a specific child process (or any child process if pid is -1) and it supports additional options for non-blocking waits and more.
+
+
+
+
+
 rl_clear_history, rl_on_new_line,
 rl_replace_line, rl_redisplay, add_history,
-fork, wait, waitpid, wait3, wait4, signal,
+signal,
 sigaction, sigemptyset, sigaddset, kill, exit,
 getcwd, chdir, stat, lstat, fstat, unlink, execve,
 dup, dup2, pipe, opendir, readdir, closedir,
