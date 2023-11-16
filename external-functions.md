@@ -86,6 +86,53 @@ Creates a new process.
 pid_t pid = fork();
 ```
 
+### sigaction
+
+More advanced and reliable way to handle signals.
+
+```c
+struct sigaction sa;
+sa.sa_handler = signal_handler_function;
+sigemptyset(&sa.sa_mask);
+sa.sa_flags = 0;
+sigaction(SIGINT, &sa, NULL);
+```
+
+Provides more control and reliability compared to signal. It allows specifying additional options (like blocking other signals during the execution of the signal handler) and is more consistent across different Unix-like systems. This makes it preferable for complex applications that require robust signal handling.
+
+### sigaddset
+
+Adds a specific signal to a signal set.
+
+```c
+sigset_t set;
+sigemptyset(&set);
+sigaddset(&set, SIGINT);
+```
+
+After initializing a signal set with sigemptyset, sigaddset is used to add individual signals (like SIGINT) to the set. It's useful when you want to block, unblock, or wait for multiple signals as a group. This function is essential for managing complex signal handling scenarios where multiple signals need to be considered together.
+
+### sigemptyset
+
+Initializes the signal set to be empty.
+
+```c
+sigset_t set;
+sigemptyset(&set);
+```
+
+Used to initialize a signal set, which is a data type (sigset_t) that can hold multiple signals. This function ensures that the set is empty to start with, meaning no signals are currently part of the set. It is typically used before adding specific signals to the set with sigaddset.
+
+### signal
+
+Sets a function to handle a specific signal.
+
+```c
+signal(SIGINT, signal_handler_function);
+```
+
+Used to define a custom function (signal_handler_function) that will be executed when the specified signal (SIGINT in this case) is received. It's a simpler, older signal handling mechanism and its behavior can vary across different systems. This can lead to portability issues. Generally, it's used for basic signal handling needs.
+
 ### wait
 
 Suspends execution of the calling process until one of its children terminates.
@@ -126,13 +173,9 @@ pid_t child_pid = waitpid(specific_pid, &status, options);
 Provides more control than wait. It can wait for a specific child process (or any child process if pid is -1) and it supports additional options for non-blocking waits and more.
 
 
-
-
-
 rl_clear_history, rl_on_new_line,
 rl_replace_line, rl_redisplay, add_history,
-signal,
-sigaction, sigemptyset, sigaddset, kill, exit,
+kill, exit,
 getcwd, chdir, stat, lstat, fstat, unlink, execve,
 dup, dup2, pipe, opendir, readdir, closedir,
 strerror, perror, isatty, ttyname, ttyslot, ioctl,
