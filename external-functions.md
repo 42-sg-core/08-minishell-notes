@@ -76,7 +76,73 @@ Reads data from a file descriptor.
 read(fd, buffer, nbytes);
 ```
 
+## Directory and File Information
+
+### chdir
+
+```c
+chdir("/path/to/dir");
+```
+
+### fstat
+
+Obtains information about a file based on an open file descriptor.
+
+```c
+struct stat statbuf;
+fstat(fd, &statbuf);
+```
+
+Operates on an open file descriptor rather than a pathname. This is useful for getting file information when you have the file descriptor from operations like open or socket, and it works with regular files, special files, pipes, and sockets.
+
+### getcwd
+
+Gets the current working directory.
+
+```c
+char cwd[1024];
+getcwd(cwd, sizeof(cwd));
+```
+
+### lstat
+
+Similar to `stat`, but does not follow symbolic links.
+
+```c
+struct stat statbuf;
+lstat("linkname", &statbuf);
+```
+
+ Identical to stat in all respects except one: if the pathname is a symbolic link, lstat returns information about the link itself, not the file it points to. This is crucial for applications that need to distinguish between symbolic links and regular files.
+
+### stat
+
+Obtain information about the file pointed to by the path.
+
+```c
+struct stat statbuf;
+stat("filename", &statbuf);
+```
+
+Retrieves detailed information about the file identified by the given pathname, such as size, permissions, and modification time. It follows symbolic links, meaning if the pathname is a symbolic link, it returns information about the file the link points to, not the link itself.
+
+### unlink
+
+Removes a file.
+
+```c
+unlink("filename");
+```
+
 ## Process Control
+
+### exit
+
+Terminates the calling process.
+
+```c
+exit(EXIT_SUCCESS);
+```
 
 ### fork
 
@@ -84,6 +150,14 @@ Creates a new process.
 
 ```c
 pid_t pid = fork();
+```
+
+### kill
+
+Send a signal to a process.
+
+```c
+kill(pid, SIGKILL);
 ```
 
 ### sigaction
@@ -172,11 +246,19 @@ pid_t child_pid = waitpid(specific_pid, &status, options);
 ```
 Provides more control than wait. It can wait for a specific child process (or any child process if pid is -1) and it supports additional options for non-blocking waits and more.
 
+## Process Execution
+
+### execve
+
+Executes a program.
+
+```c
+char *args[] = {"program", "arg1", "arg2", NULL};
+execve("program", args, envp);
+```
 
 rl_clear_history, rl_on_new_line,
 rl_replace_line, rl_redisplay, add_history,
-kill, exit,
-getcwd, chdir, stat, lstat, fstat, unlink, execve,
 dup, dup2, pipe, opendir, readdir, closedir,
 strerror, perror, isatty, ttyname, ttyslot, ioctl,
 getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
