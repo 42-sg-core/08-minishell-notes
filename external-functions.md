@@ -76,6 +76,37 @@ Reads data from a file descriptor.
 read(fd, buffer, nbytes);
 ```
 
+## File Descriptor Manipulation
+
+### dup
+
+Duplicates an existing file descriptor.
+
+```c
+int newfd = dup(oldfd);
+```
+
+Creates a copy of the file descriptor oldfd, assigning it the lowest-numbered available file descriptor. This is useful when you need to redirect output or input streams in a Unix-like environment. For instance, it's commonly used in shell implementations to handle redirections like duplicating file descriptors for stdin, stdout, or stderr.
+
+### dup2
+
+Duplicates an existing file descriptor to a specified file descriptor.
+
+```c
+int newfd = dup2(oldfd, targetfd);
+```
+
+Similar to dup, but it allows you to specify the file descriptor number (targetfd) for the duplicate. If targetfd is already open, dup2 will first close it before duplicating oldfd. This is particularly useful when you want to redirect output or input streams to or from specific file descriptors, offering more control compared to dup.
+
+### pipe
+
+Creates a pipe.
+
+```c
+int fds[2];
+pipe(fds);
+```
+
 ## Directory and File Information
 
 ### chdir
@@ -259,7 +290,7 @@ execve("program", args, envp);
 
 rl_clear_history, rl_on_new_line,
 rl_replace_line, rl_redisplay, add_history,
-dup, dup2, pipe, opendir, readdir, closedir,
+opendir, readdir, closedir,
 strerror, perror, isatty, ttyname, ttyslot, ioctl,
 getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
 tgetnum, tgetstr, tgoto, tputs
