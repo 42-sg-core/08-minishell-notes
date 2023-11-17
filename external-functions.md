@@ -107,6 +107,41 @@ int fds[2];
 pipe(fds);
 ```
 
+## Directory Operations
+
+### closedir
+
+Closes a directory stream.
+
+```c
+closedir(dir);
+```
+
+Used to close the directory stream. This is important for resource management, ensuring that any resources associated with the directory stream are released.
+
+### opendir
+
+Open a directory stream.
+
+```c
+DIR *dir = opendir("/path/to/directory");
+```
+
+Used to open a directory stream corresponding to the directory name provided. It returns a pointer to the directory stream, which can be used with readdir to read the directory's contents. It's essential for directory traversal operations.
+
+### readdir
+
+Reads a directory entry from a directory stream.
+
+```c
+struct dirent *entry;
+while ((entry = readdir(dir)) != NULL) {
+  printf("%s\n", entry->d_name);
+}
+```
+
+Sequentially reads directory entries from the directory stream opened by opendir. It returns a pointer to a struct dirent representing the next directory entry in the directory stream. It's used for iterating over all files and directories within a directory.
+
 ## Directory and File Information
 
 ### chdir
@@ -288,9 +323,110 @@ char *args[] = {"program", "arg1", "arg2", NULL};
 execve("program", args, envp);
 ```
 
+## Error Handling
+
+### perror
+
+Print a human-readable error message to standard error.
+
+```c
+perror("Error occurred");
+```
+
+Serves a similar purpose to strerror but with a slight difference. It prints a custom message followed by a colon and the textual representation of the current errno value. perror is convenient for debugging and error logging, as it automatically includes the error description without requiring an explicit call to strerror.
+
+### strerror
+
+Convert an error number into a human-readable string.
+
+```c
+int errnum = errno;
+printf("Error: %s\n", strerror(errnum));
+```
+
+Takes an error number (usually obtained from errno) and returns a pointer to the corresponding message string that describes the error. This is particularly useful for displaying error messages in a more user-friendly format, making it easier to understand what went wrong during program execution.
+
+## Terminal Control
+
+### getenv
+
+Gets an environment variable.
+
+```c
+char *path = getenv("PATH");
+```
+
+### ioctl
+
+Controls device.
+
+```c
+ioctl(fd, request, ...);
+```
+
+### isatty
+
+Determines if a file descriptor refers to a terminal.
+
+```c
+if (isatty(STDIN_FILENO)) {
+  printf("Standard input is a terminal.\n");
+}
+```
+
+Checks if a file descriptor (like STDIN_FILENO, STDOUT_FILENO, or STDERR_FILENO) is associated with a terminal device. This function is often used to determine whether standard input/output/error are connected to a terminal, which can influence how a program behaves (e.g., whether to use terminal-specific operations).
+
+### tcgetattr
+
+Gets the current settings of the terminal.
+
+```c
+struct termios termSettings;
+tcgetattr(STDIN_FILENO, &termSettings);
+```
+
+Fetches the current settings of the specified terminal. This includes various parameters such as input/output speed, control characters, local modes, etc. It's commonly used in conjunction with tcsetattr to modify terminal settings: first, get the current settings, modify them as needed, and then set them using tcsetattr.
+
+### tcsetattr
+
+Sets the parameters associated with the terminal.
+
+```c
+struct termios termSettings;
+tcgetattr(STDIN_FILENO, &termSettings);
+// Modify termSettings as needed
+tcsetattr(STDIN_FILENO, TCSANOW, &termSettings);
+```
+
+Used to set the attributes of a terminal device, such as setting the input and output modes, control characters, etc. The changes can be applied immediately (TCSANOW), after all output has been transmitted (TCSADRAIN), or after all input has been received but not read (TCSAFLUSH). This function is essential for customizing the behavior of terminal input and output.
+
+### ttyname
+
+Gets the name of the terminal associated with a file descriptor.
+
+```c
+char *tty = ttyname(STDIN_FILENO);
+if (tty) {
+  printf("Standard input is connected to %s\n", tty);
+}
+```
+
+Returns the name of the terminal device connected to a given file descriptor, such as /dev/tty for UNIX systems. It's useful for obtaining human-readable terminal device names, which can be used for logging, debugging, or displaying terminal-related information to the user.
+
+### ttyslot
+
+Finds the index of the current user's terminal in some system files.
+
+```c
+int slot = ttyslot();
+if (slot > 0) {
+  printf("Terminal slot number: %d\n", slot);
+}
+```
+
+Less commonly used function that returns the index of the terminal associated with the current process in system files like /etc/ttys. This index can be used in certain system-level operations or for retrieving specific information about the user's terminal session.
+
 rl_clear_history, rl_on_new_line,
 rl_replace_line, rl_redisplay, add_history,
-opendir, readdir, closedir,
-strerror, perror, isatty, ttyname, ttyslot, ioctl,
-getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
+tgetent, tgetflag,
 tgetnum, tgetstr, tgoto, tputs
