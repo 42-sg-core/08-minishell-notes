@@ -491,5 +491,54 @@ tputs(tgetstr("cl", NULL), 1, putchar);
 
 Used to output the terminal control strings obtained from tgetstr or tgoto. It handles padding and other terminal-specific requirements. This function is integral for applying the control sequences to the terminal effectively.
 
-rl_clear_history, rl_on_new_line,
-rl_replace_line, rl_redisplay, add_history,
+## Realine Library
+
+### add_history
+
+Adds a line to the readline history.
+
+```c
+add_history("command");
+```
+
+Adds a line to readline's history list, allowing it to be recalled later. This is a core feature for any shell, enabling users to navigate through previously entered commands.
+
+### rl_clear_history
+
+Clears the readline history.
+
+```c
+rl_clear_history();
+```
+
+Clears all items from readline's history list. This is useful in scenarios where you want to reset the command history, for instance, when starting a new session in your shell.
+
+### rl_on_new_line
+
+Informs readline that we have moved to a new line.
+
+```c
+rl_on_new_line();
+```
+
+Used to reset readline's internal state whenever the output has moved to a new line. This ensures that readline's display functions work correctly, particularly after outputting text.
+
+### rl_redisplay
+
+Redisplays the current line.
+
+```c
+rl_redisplay();
+```
+
+Forces readline to update the display, redrawing the current line. It's especially useful after modifying the line buffer programmatically, ensuring the changes are reflected on the screen.
+
+### rl_replace_line
+
+Replaces the current line with a new one without a newline.
+
+```c
+rl_replace_line("New line content", 0);
+```
+
+Replaces the contents of the line currently being edited in readline with new text, without adding a newline. It's handy for updating the current command line programmatically.
