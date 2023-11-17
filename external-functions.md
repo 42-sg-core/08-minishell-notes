@@ -146,6 +146,8 @@ Sequentially reads directory entries from the directory stream opened by opendir
 
 ### chdir
 
+Changes current working directory.
+
 ```c
 chdir("/path/to/dir");
 ```
@@ -426,7 +428,68 @@ if (slot > 0) {
 
 Less commonly used function that returns the index of the terminal associated with the current process in system files like /etc/ttys. This index can be used in certain system-level operations or for retrieving specific information about the user's terminal session.
 
+## Terminal Capabilities
+
+### tgetent
+
+Loads the terminal capability database for a specific terminal type.
+
+```c
+char buffer[1024];
+int status = tgetent(buffer, getenv("TERM"));
+```
+
+Initializes the terminfo database for the terminal type specified (usually retrieved from the TERM environment variable). It's the first function to be called before using other terminfo functions. This function is crucial for programs that need to work with various types of terminals with different capabilities.
+
+### tgetflag
+
+Checks if a terminal has a certain boolean capability.
+
+```c
+int has_colors = tgetflag("Co");
+```
+
+Used to query the terminal's capabilities database to determine if the terminal supports a specific boolean capability, such as color support. This function helps in adapting the program behavior based on the terminal's capabilities.
+
+### tgetnum
+
+Gets the numeric value of a terminal capability.
+
+```c
+int columns = tgetnum("co");
+```
+
+Retrieves numeric capabilities of the terminal, like the number of columns or rows. It's useful for programs that need to adjust their output based on the size or other numeric capabilities of the terminal.
+
+### tgetstr
+
+Gets the string value of a terminal capability.
+
+```c
+char *clear_cmd = tgetstr("cl", NULL);
+```
+
+Used to retrieve string capabilities, such as control sequences for clearing the screen, moving the cursor, etc. This function is essential for programs that perform more complex terminal manipulations.
+
+### tgoto
+
+Resolves a cursor movement string for specific cursor positions.
+
+```c
+char *move_cmd = tgoto(tgetstr("cm", NULL), x, y);
+```
+
+Used in conjunction with tgetstr to compute control strings for cursor movement to specific positions (x, y). It's particularly useful for text-based interfaces that need precise control over cursor positioning.
+
+### tputs
+
+Outputs a terminal control string.
+
+```c
+tputs(tgetstr("cl", NULL), 1, putchar);
+```
+
+Used to output the terminal control strings obtained from tgetstr or tgoto. It handles padding and other terminal-specific requirements. This function is integral for applying the control sequences to the terminal effectively.
+
 rl_clear_history, rl_on_new_line,
 rl_replace_line, rl_redisplay, add_history,
-tgetent, tgetflag,
-tgetnum, tgetstr, tgoto, tputs
